@@ -498,6 +498,17 @@ namespace KDTree
           _Region_ region(vmin, vmax, _M_acc, _M_cmp);
           return this->find_within_range(region, out);
         }
+        
+        // added by ydzhang, 2011.12.7
+        template <typename SearchVal>
+        size_type
+        count_within_range(SearchVal const& vmin, SearchVal const& vmax) const
+        {
+          if (!_M_get_root()) return 0;
+          _Region_ region(vmin, vmax, _M_acc, _M_cmp);
+          return this->count_within_range(region);
+        }
+
 
       template <typename _OutputIterator>
         _OutputIterator

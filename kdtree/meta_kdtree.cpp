@@ -103,6 +103,24 @@ file_meta *mylist_find(mylist *mlist, const meta_tuple &c)
     return NULL;
 }
 
+
+int mylist_range_find(mylist *mlist, const meta_tuple &c1, const meta_tuple &c2)
+{
+    int count = 0;
+    for(int i = 0; i < mlist->size; i++) {
+        file_meta *m = (file_meta *)mlist->item[i].data;
+        if(m->uid >= c1[0] && m->uid <= c2[0] &&
+           m->gid >= c1[1] && m->uid <= c2[1] &&
+           m->size >= c1[2] && m->size <= c2[2] &&
+           m->atime >= c1[3] && m->atime <= c2[3] &&
+           m->ctime >= c1[4] && m->ctime <= c2[4] &&
+           m->mtime >= c1[5] && m->mtime <= c2[5]) {
+            count++;
+        }
+    }
+    return count;
+}
+
 int main(int argc, char *argv[])
 {
     if(2 != argc) {
@@ -114,7 +132,7 @@ int main(int argc, char *argv[])
     tree_type src(std::ptr_fun(tac));
 
     mylist *mlist = meta_read(argv[1]);
-    printf("size = %d\n", mlist->size);
+    printf("partiton size = %d\n", mlist->size);
 
 
     // keep first, middle last file
@@ -182,6 +200,48 @@ int main(int argc, char *argv[])
         gettimeofday(&end, NULL);
         print_interval(start, end);
     }
+
+    {
+        std::cout << "range find in kdtree" << std::endl;
+        std::vector<meta_tuple> v;
+        std::ostream_iterator<meta_tuple> o(std::cout, "\n");
+
+        {
+            meta_tuple c1(0, 0, 1, 0, 0, 0);
+            meta_tuple c2(0xffffffff, 0xffffffff, 1024, 0xffffffff, 0xffffffff, 0xffffffff);
+            gettimeofday(&start, NULL);
+            src.find_within_range(c1, c2, std::back_inserter(v));
+            // src.find_within_range(c1, c2, o);
+            gettimeofday(&end, NULL);
+            print_interval(start, end);
+            printf("%results: %u\n", v.size());
+        }
+
+        {
+            meta_tuple c1(0, 0, 1, 0, 0, 0);
+            meta_tuple c2(0xffffffff, 0xffffffff, 1024, 0xffffffff, 0xffffffff, 0xffffffff);
+            gettimeofday(&start, NULL);
+            int res = src.count_within_range(c1, c2);
+            gettimeofday(&end, NULL);
+            print_interval(start, end);
+            printf("%results: %u\n", res);
+
+        }
+    }
+
+    {
+        std::cout << "range find in list" << std::endl;
+        
+        meta_tuple c1(0, 0, 1, 0, 0, 0);
+        meta_tuple c2(0xffffffff, 0xffffffff, 1024, 0xffffffff, 0xffffffff, 0xffffffff);
+        gettimeofday(&start, NULL);
+        int res = mylist_range_find(mlist, c1, c2);
+        gettimeofday(&end, NULL);
+        print_interval(start, end);
+        printf("%results: %u\n", res);
+
+    }
+
 
     return 0;
 }
