@@ -42,7 +42,7 @@ mylist *partition_init(const char *cfile)
             continue;
         }
 
-        partition *pt = mymalloc(sizeof(partition));
+        partition *pt = (partition *)mymalloc(sizeof(partition));
         strcpy(pt->name, line);
         mylist_append(list, pt);
     }

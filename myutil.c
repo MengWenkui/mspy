@@ -61,7 +61,7 @@ int mylist_append(mylist *list, void *data)
 
     /* exapand the list first */
     list->max *= 2;
-    list->item = myrealloc(list->item, list->max);
+    list->item = (mylist_item *)myrealloc(list->item, list->max * sizeof(mylist_item));
     list->item[list->size].data = data;
     list->size++;
     return 0 ;
