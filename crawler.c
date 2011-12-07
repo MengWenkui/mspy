@@ -110,6 +110,9 @@ int crawl_run(const char *cfile)
 
 int main()
 {
+    if(0 != access("data", F_OK)) {
+        mkdir("data", 0755);
+    }
     crawl_run("partition.conf");
     return 0;
 }

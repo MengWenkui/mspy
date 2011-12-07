@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -std=c99
+CFLAGS = -std=c99 -g
 TAR = mspy-crawl mspy-search
 
 all: $(TAR)

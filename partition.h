@@ -1,6 +1,7 @@
 #ifndef _PARTITION_H
 #define _PARTITION_H
 
+#define P_DATA_DIR "data"
 #define P_FILTER_SUFFIX ".filter"
 #define P_META_SUFFIX ".meta"
 #define P_CFG_PATH "partition.conf"

@@ -66,13 +66,17 @@ void encode_name(char *encoded_name, const char *name)
 
 void get_meta_path(char *metapath, const char *path)
 {
-    encode_name(metapath, path);
+    char tpath[1024];
+    encode_name(tpath, path);
+    sprintf(metapath, "%s/%s", P_DATA_DIR, tpath);
     strcat(metapath, P_META_SUFFIX);
 }
 
 void get_filter_path(char *filterpath, const char *path)
 {
-    encode_name(filterpath, path);
+    char tpath[1024];
+    encode_name(tpath, path);
+    sprintf(filterpath, "%s/%s", P_DATA_DIR, tpath);
     strcat(filterpath, P_FILTER_SUFFIX);
 }
 
