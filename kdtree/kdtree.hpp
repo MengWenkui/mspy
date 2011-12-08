@@ -76,6 +76,7 @@
 #include <cmath>
 #include <cstddef>
 #include <cassert>
+#include <queue>
 
 #include "function.hpp"
 #include "allocator.hpp"
@@ -109,6 +110,7 @@ namespace KDTree
 
       typedef _Node_compare<_Val, _Acc, _Cmp> _Node_compare_;
 
+    
     public:
       typedef _Region<__K, _Val, typename _Acc::result_type, _Acc, _Cmp>
         _Region_;
@@ -121,6 +123,21 @@ namespace KDTree
       typedef typename _Dist::distance_type distance_type;
       typedef size_t size_type;
       typedef ptrdiff_t difference_type;
+      
+      // added by ydzhang, 2011.12.8
+      struct _Queue_node { 
+      public:
+        _Link_type v; 
+        _Region_ r; 
+        size_t l;
+      public:
+        _Queue_node(_Link_type _v, const _Region_ &_r, size_t _l):
+        v(_v), r(_r), l(_l)
+        {
+        }
+       };
+      typedef std::queue<_Queue_node> _Queue_type;
+
 
       KDTree(_Acc const& __acc = _Acc(), _Dist const& __dist = _Dist(),
 	     _Cmp const& __cmp = _Cmp(), const allocator_type& __a = allocator_type())
@@ -523,6 +540,33 @@ namespace KDTree
             }
           return out;
         }
+
+        // added by ydzhang, 2011.12.8
+        template <typename SearchVal, typename _OutputIterator>
+        _OutputIterator
+        find_within_range_norec(SearchVal const& vmin, SearchVal const& vmax,
+                          _OutputIterator out) const
+        {
+          if (!_M_get_root()) return out;
+          _Region_ region(vmin, vmax, _M_acc, _M_cmp);
+          return this->find_within_range_norec(region, out);
+        }
+
+
+        template <typename _OutputIterator>
+        _OutputIterator
+        find_within_range_norec(_Region_ const& region,
+                          _OutputIterator out) const
+        {
+          if (_M_get_root())
+            {
+              _Region_ bounds(region);
+              out = _M_find_within_range_norec(out, _M_get_root(),
+                                   region, bounds, 0);
+            }
+          return out;
+        }
+
 
       template <class SearchVal>
       std::pair<const_iterator, distance_type>
@@ -1035,6 +1079,51 @@ namespace KDTree
 
           return out;
         }
+
+
+      template <typename _OutputIterator>
+        _OutputIterator
+        _M_find_within_range_norec(_OutputIterator out,
+                             _Link_const_type __N, _Region_ const& __REGION,
+                             _Region_ const& __BOUNDS,
+                             size_type const __L) const
+        {
+            _Queue_type queue;
+            
+            _Link_type __N_ = const_cast<_Link_type>(__N);
+            _Queue_node root(__N_, __REGION, __L);
+
+            queue.push(root);
+
+            while(!queue.empty()) {
+                _Queue_node qn = queue.front();
+                queue.pop();
+                if(__REGION.encloses(_S_value(qn.v))) {
+                    *out++ = _S_value(qn.v);
+                }
+
+                if(_S_left(qn.v)) {
+                    _Region_ r(qn.r);
+                    r.set_high_bound(_S_value(qn.v), qn.l);
+                    if(__REGION.intersects_with(r)) {
+                        _Queue_node qleft(_S_left(qn.v), r, qn.l+1);
+                        queue.push(qleft);
+                    }
+                }
+
+                if(_S_right(qn.v)) {
+                    _Region_ r(qn.r);
+                    r.set_low_bound(_S_value(__N), qn.l);
+                    if(__REGION.intersects_with(r)) {
+                        _Queue_node qright(_S_right(qn.v), r, qn.l+1);
+                        queue.push(qright);
+                    }
+                }
+            }
+
+            return out;
+        }
+
 
 
       template <typename _Iter>

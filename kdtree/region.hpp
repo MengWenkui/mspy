@@ -25,7 +25,7 @@ namespace KDTree
       // Note the region (first) component is not supposed to have an area, its
       // bounds should all be set to a specific point.
       typedef std::pair<_Region,_SubVal> _CenterPt;
-
+      
       _Region(_Acc const& __acc=_Acc(), const _Cmp& __cmp=_Cmp())
 	: _M_cmp(__acc), _M_acc(__cmp) {}
 
