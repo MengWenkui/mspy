@@ -160,9 +160,14 @@ int main(int argc, char *argv[])
     meta_tuple last(m->uid, m->gid, m->size, m->atime, m->ctime, m->mtime);
     meta_info_t last_mi(m->uid, m->gid, m->size, m->atime, m->ctime, m->mtime);
 
-    print_meta_info(&first_mi);
-    print_meta_info(&mid_mi);
-    print_meta_info(&last_mi);
+ 
+    std::cout << "first: " << first << std::endl;
+    std::cout << "mid: " << mid << std::endl;
+    std::cout << "last: " << last << std::endl;
+
+//    print_meta_info(&first_mi);
+//    print_meta_info(&mid_mi);
+//    print_meta_info(&last_mi);
 
     // insert every file's metadata to kdtree
     for(int i = 0; i < mlist->size; i++) {
@@ -180,10 +185,9 @@ int main(int argc, char *argv[])
         se.insert(mi);
     }
 
-    
-    std::cout << "first: " << first << std::endl;
-    std::cout << "mid: " << mid << std::endl;
-    std::cout << "last: " << last << std::endl;
+    printf("height of simple kdtree: %d\n", se.height());
+    se.optimise();
+    printf("height after optimise: %d\n", se.height());
 
     struct timeval start, end;
 
@@ -278,7 +282,7 @@ int main(int argc, char *argv[])
         }
 
         {
-            std::cout << "range coun in kdtree recursively" << std::endl;
+            std::cout << "range count in kdtree recursively" << std::endl;
             gettimeofday(&start, NULL);
             int res = src.count_within_range(c1, c2);
             gettimeofday(&end, NULL);

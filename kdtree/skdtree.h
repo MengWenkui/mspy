@@ -94,6 +94,19 @@ struct region_t {
 
 };
 
+struct node_cmp_t {
+    int k;
+    node_cmp_t(int k) 
+    {
+        this->k = k;
+    }
+
+    bool operator()(meta_info_t *first, meta_info_t *second) const
+    {
+        return first->d[k] < second->d[k]; // not <=, attention
+    }
+};
+
 struct skdtree_node_t {
     meta_info_t *meta;
     struct skdtree_node_t *left;
@@ -117,11 +130,19 @@ public:
     void insert(meta_info_t *meta);
     meta_info_t* find_exact(const meta_info_t& target);
     void find_within_range(const region_t &r, result_type &result);
+    int height();
+    void dump(result_type &result);
+    void clear();
+    void optimise();
 private:
     skdtree_node_t *root;
     int K;
+private:
+    int _height(skdtree_node_t *node);
     void _insert(skdtree_node_t *node, meta_info_t *node, int level);
     meta_info_t* _find_exact(skdtree_node_t *node, const meta_info_t& target, int level);
     void _find_within_range(skdtree_node_t *node, const region_t &r, 
             const region_t &b, int level, result_type &result);
+    void _dump(skdtree_node_t *node, result_type &result);
+    void _optimise(result_type::iterator begin, result_type::iterator end, int level);
 };
