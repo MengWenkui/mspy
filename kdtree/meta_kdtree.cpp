@@ -16,6 +16,8 @@
 #include "../myutil.h"
 #include "../partition.h"
 #include "kdtree.hpp"
+#include "skdtree.h"
+
 
 struct meta_tuple {
    typedef uint32_t value_type;
@@ -90,6 +92,15 @@ void print_interval(struct timeval start, struct timeval end)
     printf("%lluus\n",val);
 }
 
+void print_meta_info(meta_info_t *meta)
+{
+    std::cout << '(';
+    for(int i = 0; i < D; i++) {
+        std::cout << meta->d[i] << " ";
+    }
+    std::cout << ')'  << std::endl;
+}
+
 file_meta *mylist_find(mylist *mlist, const meta_tuple &c)
 {
     for(int i = 0; i < mlist->size; i++) {
@@ -131,6 +142,7 @@ int main(int argc, char *argv[])
 
 
     tree_type src(std::ptr_fun(tac));
+    skdtree_t se(6);
 
     mylist *mlist = meta_read(argv[1]);
     printf("partiton size = %d\n", mlist->size);
@@ -140,11 +152,17 @@ int main(int argc, char *argv[])
     file_meta *m = NULL;
     m = (file_meta *)mlist->item[0].data;
     meta_tuple first(m->uid, m->gid, m->size, m->atime, m->ctime, m->mtime);
+    meta_info_t first_mi(m->uid, m->gid, m->size, m->atime, m->ctime, m->mtime);
     m = (file_meta *)mlist->item[mlist->size/2].data;
     meta_tuple mid(m->uid, m->gid, m->size, m->atime, m->ctime, m->mtime);
+    meta_info_t mid_mi(m->uid, m->gid, m->size, m->atime, m->ctime, m->mtime);
     m = (file_meta *)mlist->item[mlist->size-1].data;
     meta_tuple last(m->uid, m->gid, m->size, m->atime, m->ctime, m->mtime);
+    meta_info_t last_mi(m->uid, m->gid, m->size, m->atime, m->ctime, m->mtime);
 
+    print_meta_info(&first_mi);
+    print_meta_info(&mid_mi);
+    print_meta_info(&last_mi);
 
     // insert every file's metadata to kdtree
     for(int i = 0; i < mlist->size; i++) {
@@ -154,6 +172,14 @@ int main(int argc, char *argv[])
     }
 
     src.optimise();
+
+    // insert every file's metadata to simple kdtree
+    for(int i = 0; i < mlist->size; i++) {
+        file_meta *m = (file_meta *)mlist->item[i].data;
+        meta_info_t *mi = new meta_info_t(m->uid, m->gid, m->size, m->atime, m->ctime, m->mtime);
+        se.insert(mi);
+    }
+
     
     std::cout << "first: " << first << std::endl;
     std::cout << "mid: " << mid << std::endl;
@@ -201,15 +227,37 @@ int main(int argc, char *argv[])
         print_interval(start, end);
     }
 
+    {
+        std::cout << "find in simple kdtree" << std::endl;
+        meta_info_t *meta;
+
+        gettimeofday(&start, NULL);
+        meta = se.find_exact(first_mi);
+        gettimeofday(&end, NULL);
+        print_interval(start, end);
+
+        gettimeofday(&start, NULL);
+        meta = se.find_exact(mid_mi);
+        gettimeofday(&end, NULL);
+        print_interval(start, end);
+        
+        gettimeofday(&start, NULL);
+        meta = se.find_exact(last_mi);
+        gettimeofday(&end, NULL);
+        print_interval(start, end);
+    }
+
     meta_tuple c1(0, 0, 1, 0, 0, 0);
     meta_tuple c2(0, 0, 1024, 0xffffffff, 0xffffffff, 0xffffffff);
 
+    meta_info_t low(0, 0, 1, 0, 0, 0);
+    meta_info_t high(0, 0, 1024, 0xffffffff, 0xffffffff, 0xffffffff);
+    region_t r(low, high);
+
+
     {
-        std::cout << "range find in kdtree" << std::endl;
-        std::ostream_iterator<meta_tuple> o(std::cout, "\n");
-
         {
-
+            std::cout << "range find in kdtree no recursively" << std::endl;
             std::vector<meta_tuple> v;
             gettimeofday(&start, NULL);
             src.find_within_range_norec(c1, c2, std::back_inserter(v));
@@ -220,16 +268,17 @@ int main(int argc, char *argv[])
         }
 
         {
+            std::cout << "range find in kdtree recursively" << std::endl;
             std::vector<meta_tuple> v;
             gettimeofday(&start, NULL);
             src.find_within_range(c1, c2, std::back_inserter(v));
-            // src.find_within_range(c1, c2, o);
             gettimeofday(&end, NULL);
             print_interval(start, end);
             printf("results: %u\n", v.size());
         }
 
         {
+            std::cout << "range coun in kdtree recursively" << std::endl;
             gettimeofday(&start, NULL);
             int res = src.count_within_range(c1, c2);
             gettimeofday(&end, NULL);
@@ -239,8 +288,18 @@ int main(int argc, char *argv[])
     }
 
     {
+        std::cout << "range find in simple kdtree" << std::endl;
+        std::vector<meta_info_t *> v;
+        gettimeofday(&start, NULL);
+        se.find_within_range(r, v);
+        gettimeofday(&end, NULL);
+        print_interval(start, end);
+        printf("results: %u\n", v.size());
+
+    }
+
+    {
         std::cout << "range find in list" << std::endl;
-        
         gettimeofday(&start, NULL);
         int res = mylist_range_find(mlist, c1, c2);
         gettimeofday(&end, NULL);

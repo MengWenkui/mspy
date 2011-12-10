@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <vector>
+#include <iostream>
 
 
 struct meta_info_t {
@@ -21,13 +22,35 @@ struct meta_info_t {
     bool compare(const meta_info_t &that) const
     {
         for(int i = 0; i < D; i++) {
-            if(d[0] != that.d[0]) {
+            if(d[i] != that.d[i]) {
                 return false;
             }
         }
         return true;
     }
 };
+
+inline bool operator==(meta_info_t const& A, meta_info_t const& B) 
+{
+   for(int i = 0; i < D; i++) {
+        if(A.d[i] != B.d[i]) {
+            return false;
+        }
+   }
+   return true;
+}
+
+/*
+std::ostream& operator<<(std::ostream& out, meta_info_t const& T) 
+{
+    out << '(';
+    for(int i = 0; i < D; i++) {
+        out << T.d[i] << " ";
+    }
+    out << ')';
+}
+
+*/
 
 struct region_t {
     meta_info_t low;
