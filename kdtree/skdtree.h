@@ -134,6 +134,7 @@ public:
     void dump(result_type &result);
     void clear();
     void optimise();
+    void balance();
 private:
     skdtree_node_t *root;
     int K;
@@ -145,4 +146,5 @@ private:
             const region_t &b, int level, result_type &result);
     void _dump(skdtree_node_t *node, result_type &result);
     void _optimise(result_type::iterator begin, result_type::iterator end, int level);
+    void _balance(skdtree_node_t** node, result_type::iterator begin, result_type::iterator end, int level);
 };

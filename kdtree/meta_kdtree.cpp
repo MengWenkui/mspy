@@ -186,7 +186,7 @@ int main(int argc, char *argv[])
     }
 
     printf("height of simple kdtree: %d\n", se.height());
-    se.optimise();
+    se.balance();
     printf("height after optimise: %d\n", se.height());
 
     struct timeval start, end;

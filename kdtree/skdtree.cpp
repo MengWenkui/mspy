@@ -163,3 +163,33 @@ void skdtree_t::_optimise(result_type::iterator begin,
         _optimise(mid + 1, end, level + 1);
     }
 }
+
+
+void skdtree_t::balance()
+{
+    result_type result;
+    dump(result);
+    clear();
+    _balance(&root, result.begin(), result.end(), 0);   
+}
+
+void skdtree_t::_balance(skdtree_node_t** node, result_type::iterator begin,
+        result_type::iterator end, int level)
+{
+    if(begin == end)  {
+        return;
+    }
+    node_cmp_t comp(level%K);
+    result_type::iterator mid = begin + (end - begin) / 2;
+    std::nth_element(begin, mid, end, comp);
+    *node = new skdtree_node_t();
+    (*node)->meta = *mid;
+    if(begin != mid) {
+        _balance(&((*node)->left), begin, mid, level + 1);
+    }
+    if(mid + 1 != end) {
+        _balance(&((*node)->right), mid + 1, end, level + 1);
+    }
+}
+
+
