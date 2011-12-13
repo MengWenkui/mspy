@@ -1,5 +1,6 @@
 #include "skdtree.h"
 #include <queue>
+#include <stack>
 #include <algorithm>
 
 int skdtree_t::height()
@@ -162,6 +163,48 @@ void skdtree_t::_find_within_range_norec(skdtree_node_t *node, const region_t &r
                 nodes.push(header->right);
                 levels.push(level + 1);
             }
+        }
+    }
+}
+
+void skdtree_t::find_within_range_norec2(const region_t &r, result_type &result)
+{
+    if(NULL != root) {
+        _find_within_range_norec2(root, r, result);
+    }
+}
+
+
+void skdtree_t::_find_within_range_norec2(skdtree_node_t *node, const region_t &r, result_type &result) 
+{
+    std::stack<skdtree_node_t *> nodes;
+    std::stack<int> levels;
+
+    int level = 0;
+    skdtree_node_t *p = node;
+    while(NULL != p || false == nodes.empty()) {
+        if(NULL != p) {
+            if(r.encloses(*(p->meta))) {
+                result.push_back(p->meta);        
+            }
+
+            if(p->meta->d[level%K] <= r.high.d[level%K]) {
+                nodes.push(p->right);
+                levels.push(level + 1);
+            }
+
+            if(p->meta->d[level%K] >= r.low.d[level%K]) {
+                p = p->left;
+            } else {
+                p = NULL;
+            }
+
+            level++;
+        } else {
+            p = nodes.top(); 
+            nodes.pop();
+            level = levels.top(); 
+            levels.pop();
         }
     }
 }

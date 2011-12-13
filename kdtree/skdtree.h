@@ -140,6 +140,7 @@ public:
     meta_info_t* find_exact(const meta_info_t& target);
     void find_within_range(const region_t &r, result_type &result);
     void find_within_range_norec(const region_t &r, result_type &result);
+    void find_within_range_norec2(const region_t &r, result_type &result);
     int height();
     void dump(result_type &result);
     void clear();
@@ -155,6 +156,8 @@ public:
     void _find_within_range(skdtree_node_t *node, const region_t &r, 
             const region_t &b, int level, result_type &result);
     void _find_within_range_norec(skdtree_node_t *node, const region_t &r, 
+            result_type &result);
+    void _find_within_range_norec2(skdtree_node_t *node, const region_t &r, 
             result_type &result);
     void _dump(skdtree_node_t *node, result_type &result);
     void _optimise(result_type::iterator begin, result_type::iterator end, int level);

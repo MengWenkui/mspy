@@ -186,9 +186,9 @@ int main(int argc, char *argv[])
     }
 
     printf("height of simple kdtree: %d\n", se.height());
-    se.balance();
-    printf("height after optimise: %d\n", se.height());
-    print_meta_info(se.root->meta);
+   // se.balance();
+   // printf("height after optimise: %d\n", se.height());
+  // / print_meta_info(se.root->meta);
 
     struct timeval start, end;
 
@@ -252,11 +252,11 @@ int main(int argc, char *argv[])
         print_interval(start, end);
     }
 
-    meta_tuple c1(0, 0, 1, 0, 0, 0);
-    meta_tuple c2(0xffffffff, 0xffffffff, 1024, 0xffffffff, 0xffffffff, 0xffffffff);
+    meta_tuple c1(0, 0, 0, 0, 0, 0);
+    meta_tuple c2(0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff);
 
-    meta_info_t low(0, 0, 1, 0, 0, 0);
-    meta_info_t high(0xffffffff, 0xffffffff, 1024, 0xffffffff, 0xffffffff, 0xffffffff);
+    meta_info_t low(0, 0, 0, 0, 0, 0);
+    meta_info_t high(0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff);
     region_t r(low, high);
 
 
@@ -307,7 +307,7 @@ int main(int argc, char *argv[])
         std::cout << "range find in simple kdtree norecursively" << std::endl;
         std::vector<meta_info_t *> v;
         gettimeofday(&start, NULL);
-        se.find_within_range_norec(r, v);
+        se.find_within_range_norec2(r, v);
         gettimeofday(&end, NULL);
         print_interval(start, end);
         printf("results: %u\n", v.size());
