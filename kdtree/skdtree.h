@@ -11,12 +11,21 @@ struct meta_info_t {
             uint32_t size, uint32_t atime,
             uint32_t ctime, uint32_t mtime) 
     {
+        /*
         d[0] = uid;
         d[1] = gid;
         d[2] = size;
         d[3] = atime;
         d[4] = ctime;
         d[5] = mtime;
+        */
+
+        d[0]= size;
+        d[1]= atime;
+        d[2] = ctime;
+        d[3] = mtime;
+        d[4] = uid;
+        d[5] = gid;
     }
 
     bool compare(const meta_info_t &that) const
@@ -130,20 +139,23 @@ public:
     void insert(meta_info_t *meta);
     meta_info_t* find_exact(const meta_info_t& target);
     void find_within_range(const region_t &r, result_type &result);
+    void find_within_range_norec(const region_t &r, result_type &result);
     int height();
     void dump(result_type &result);
     void clear();
     void optimise();
     void balance();
-private:
+
     skdtree_node_t *root;
     int K;
-private:
+  
     int _height(skdtree_node_t *node);
     void _insert(skdtree_node_t *node, meta_info_t *node, int level);
     meta_info_t* _find_exact(skdtree_node_t *node, const meta_info_t& target, int level);
     void _find_within_range(skdtree_node_t *node, const region_t &r, 
             const region_t &b, int level, result_type &result);
+    void _find_within_range_norec(skdtree_node_t *node, const region_t &r, 
+            result_type &result);
     void _dump(skdtree_node_t *node, result_type &result);
     void _optimise(result_type::iterator begin, result_type::iterator end, int level);
     void _balance(skdtree_node_t** node, result_type::iterator begin, result_type::iterator end, int level);

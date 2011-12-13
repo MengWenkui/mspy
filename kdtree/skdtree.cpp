@@ -1,4 +1,5 @@
 #include "skdtree.h"
+#include <queue>
 #include <algorithm>
 
 int skdtree_t::height()
@@ -100,18 +101,67 @@ void skdtree_t::_find_within_range(skdtree_node_t *node, const region_t& r,
     }
 
     if(NULL != node->left) {
-        region_t nb(b);
-        nb.set_high_bound(level, K, node->meta->d[level%K]);
-        if(r.intersect_with(nb)) {
-            _find_within_range(node->left, r, nb, level + 1, result);
-        }
+     //   region_t nb(b);
+     //   nb.set_high_bound(level, K, node->meta->d[level%K]);
+     //   if(r.intersect_with(nb)) {
+     //       _find_within_range(node->left, r, nb, level + 1, result);
+     //   }
+     //
+         if(node->meta->d[level%K] >= r.low.d[level%K]) {
+            _find_within_range(node->left, r, r, level + 1, result);
+         }
     }
 
     if(NULL != node->right) {
-        region_t nb(b);
-        nb.set_low_bound(level, K, node->meta->d[level%K]);
-        if(r.intersect_with(nb)) {
-            _find_within_range(node->right, r, nb, level + 1, result);
+     //   region_t nb(b);
+     //   nb.set_low_bound(level, K, node->meta->d[level%K]);
+     //   if(r.intersect_with(nb)) {
+     //       _find_within_range(node->right, r, nb, level + 1, result);
+     //   }
+     //
+         if(node->meta->d[level%K] <= r.high.d[level%K]) {
+            _find_within_range(node->right, r, r, level + 1, result);
+         }
+    }
+}
+
+void skdtree_t::find_within_range_norec(const region_t &r, result_type &result)
+{
+    if(NULL != root) {
+        _find_within_range_norec(root, r, result);
+    }
+}
+
+void skdtree_t::_find_within_range_norec(skdtree_node_t *node, const region_t &r, result_type &result)
+{
+    std::queue<skdtree_node_t *> nodes;
+    std::queue<int> levels;
+    nodes.push(node);
+    levels.push(0);
+
+    while(false == nodes.empty()) {
+        skdtree_node_t *header  = nodes.front();
+        nodes.pop();
+
+        int level = levels.front();
+        levels.pop();
+
+        if(true == r.encloses(*(header->meta))) {
+            result.push_back(header->meta);
+        }
+
+        if(NULL != header->left) {
+            if(header->meta->d[level%K] >= r.low.d[level%K]) {
+                nodes.push(header->left);
+                levels.push(level + 1);
+            }
+        }
+
+        if(NULL != header->right) {
+            if(header->meta->d[level%K] <= r.high.d[level%K]) {
+                nodes.push(header->right);
+                levels.push(level + 1);
+            }
         }
     }
 }
