@@ -160,6 +160,7 @@ public:
     void _find_within_range_norec2(skdtree_node_t *node, const region_t &r, 
             result_type &result);
     void _dump(skdtree_node_t *node, result_type &result);
+    void _clear(skdtree_node_t *node);
     void _optimise(result_type::iterator begin, result_type::iterator end, int level);
     void _balance(skdtree_node_t** node, result_type::iterator begin, result_type::iterator end, int level);
 };

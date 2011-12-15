@@ -1,10 +1,13 @@
-all: meta_kdtree test_kdtree
+all: meta_kdtree test_kdtree skdtree_test
 
-meta_kdtree: meta_kdtree.cpp 
-	g++ -o meta_kdtree skdtree.cpp meta_kdtree.cpp ../partition.c ../myutil.c ../filter.c -g
+skdtree_test: skdtree_test.cpp skdtree.cpp  ../partition.c ../myutil.c ../filter.c
+	g++ -o $@ $^ -g
+
+meta_kdtree: meta_kdtree.cpp  skdtree.cpp  ../partition.c ../myutil.c ../filter.c
+	g++ -o $@ $^ -g
 
 test_kdtree: test_kdtree.cpp 
-	g++ -o test_kdtree test_kdtree.cpp
+	g++ -o $@ $^ -g
 
 clean:
-	rm meta_kdtree test_kdtree *.o -rf
+	rm meta_kdtree test_kdtree skdtree_test *.o -rf

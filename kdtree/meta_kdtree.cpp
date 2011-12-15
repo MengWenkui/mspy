@@ -190,6 +190,12 @@ int main(int argc, char *argv[])
    // printf("height after optimise: %d\n", se.height());
   // / print_meta_info(se.root->meta);
 
+
+    printf("\n");
+    
+
+    // test begin
+    
     struct timeval start, end;
 
     {
@@ -210,6 +216,7 @@ int main(int argc, char *argv[])
         gettimeofday(&end, NULL);
         print_interval(start, end);
 
+        printf("\n");
     }
 
     {
@@ -230,6 +237,8 @@ int main(int argc, char *argv[])
         res = mylist_find(mlist, last);
         gettimeofday(&end, NULL);
         print_interval(start, end);
+
+        printf("\n");
     }
 
     {
@@ -250,6 +259,8 @@ int main(int argc, char *argv[])
         meta = se.find_exact(last_mi);
         gettimeofday(&end, NULL);
         print_interval(start, end);
+
+         printf("\n");
     }
 
     meta_tuple c1(0, 0, 0, 0, 0, 0);
@@ -270,6 +281,7 @@ int main(int argc, char *argv[])
             gettimeofday(&end, NULL);
             print_interval(start, end);
             printf("results: %u\n", v.size());
+            printf("\n");
         }
 
         {
@@ -280,6 +292,7 @@ int main(int argc, char *argv[])
             gettimeofday(&end, NULL);
             print_interval(start, end);
             printf("results: %u\n", v.size());
+            printf("\n");
         }
 
         {
@@ -289,18 +302,8 @@ int main(int argc, char *argv[])
             gettimeofday(&end, NULL);
             print_interval(start, end);
             printf("results: %u\n", res);
+            printf("\n");
         }
-    }
-
-    {
-        std::cout << "range find in simple kdtree" << std::endl;
-        std::vector<meta_info_t *> v;
-        gettimeofday(&start, NULL);
-        se.find_within_range(r, v);
-        gettimeofday(&end, NULL);
-        print_interval(start, end);
-        printf("results: %u\n", v.size());
-
     }
 
     {
@@ -311,10 +314,37 @@ int main(int argc, char *argv[])
         gettimeofday(&end, NULL);
         print_interval(start, end);
         printf("results: %u\n", v.size());
+        printf("\n");
 
     }
 
 
+    {
+        std::cout << "range find in simple kdtree" << std::endl;
+        std::vector<meta_info_t *> v;
+        gettimeofday(&start, NULL);
+        se.find_within_range(r, v);
+        gettimeofday(&end, NULL);
+        print_interval(start, end);
+        printf("results: %u\n", v.size());
+        printf("\n");
+
+
+        v.clear();
+        se.balance();
+        printf("height after optimise: %d\n", se.height());
+
+        std::cout << "range find in simple balance kdtree" << std::endl;
+        gettimeofday(&start, NULL);
+        se.find_within_range(r, v);
+        gettimeofday(&end, NULL);
+        print_interval(start, end);
+        printf("results: %u\n", v.size());
+        printf("\n");
+
+    }
+
+   
     {
         std::cout << "range find in list" << std::endl;
         gettimeofday(&start, NULL);
@@ -322,9 +352,8 @@ int main(int argc, char *argv[])
         gettimeofday(&end, NULL);
         print_interval(start, end);
         printf("results: %u\n", res);
-
+        printf("\n");
     }
-
 
     return 0;
 }

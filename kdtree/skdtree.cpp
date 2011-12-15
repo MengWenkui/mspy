@@ -5,21 +5,21 @@
 
 int skdtree_t::height()
 {
-    if(NULL == root) {
-        return 0;
+    if(NULL != root) {
+        return _height(root);
     }
-    return _height(root);
+    return 0;
 }
 
 int skdtree_t::_height(skdtree_node_t *node) 
 {
-    if(NULL == node) {
-        return 0;
+    if(NULL != node) {
+        int lh = _height(node->left);
+        int rh = _height(node->right);
+        return (lh > rh? lh: rh) + 1;
     }
 
-    int lh = _height(node->left);
-    int rh = _height(node->right);
-    return (lh > rh? lh: rh) + 1;
+    return 0;
 }
 
 void skdtree_t::insert(meta_info_t *meta)
@@ -59,11 +59,10 @@ void skdtree_t::_insert(skdtree_node_t *node, meta_info_t *meta, int level)
 
 meta_info_t* skdtree_t::find_exact(const meta_info_t& target)
 {
-    if(NULL == root) {
-        return NULL;
-    } 
-
-    return _find_exact(root, target, 0);
+    if(NULL != root) {
+        return _find_exact(root, target, 0);
+    }
+    return NULL;
 }
 
 meta_info_t* skdtree_t::_find_exact(skdtree_node_t *node, const meta_info_t& target, int level)
@@ -86,20 +85,18 @@ meta_info_t* skdtree_t::_find_exact(skdtree_node_t *node, const meta_info_t& tar
 
 void skdtree_t::find_within_range(const region_t &r, result_type &result)
 {
-    if(NULL == root) {
-        return;
+    if(NULL != root) {
+        region_t b(r);
+        _find_within_range(root, r, b, 0, result);
     }
-
-    region_t b(r);
-    _find_within_range(root, r, b, 0, result);
 }
 
 void skdtree_t::_find_within_range(skdtree_node_t *node, const region_t& r, 
             const region_t &b, int level, result_type &result)
 {
-    if(true == r.encloses(*(node->meta))) {
+      if(true == r.encloses(*(node->meta))) {
         result.push_back(node->meta);   
-    }
+      }
 
     if(NULL != node->left) {
      //   region_t nb(b);
@@ -108,9 +105,9 @@ void skdtree_t::_find_within_range(skdtree_node_t *node, const region_t& r,
      //       _find_within_range(node->left, r, nb, level + 1, result);
      //   }
      //
-         if(node->meta->d[level%K] >= r.low.d[level%K]) {
+          if(node->meta->d[level%K] >= r.low.d[level%K]) {
             _find_within_range(node->left, r, r, level + 1, result);
-         }
+          }
     }
 
     if(NULL != node->right) {
@@ -120,9 +117,9 @@ void skdtree_t::_find_within_range(skdtree_node_t *node, const region_t& r,
      //       _find_within_range(node->right, r, nb, level + 1, result);
      //   }
      //
-         if(node->meta->d[level%K] <= r.high.d[level%K]) {
+          if(node->meta->d[level%K] <= r.high.d[level%K]) {
             _find_within_range(node->right, r, r, level + 1, result);
-         }
+          }
     }
 }
 
@@ -222,13 +219,22 @@ void skdtree_t::_dump(skdtree_node_t *node, result_type &result)
         result.push_back(node->meta);
         _dump(node->left, result);
         _dump(node->right, result);
-        delete node;
     }
 }
 
 void skdtree_t::clear()
 {
+    _clear(root);
     root = NULL;
+}
+
+void skdtree_t::_clear(skdtree_node_t *node)
+{
+    if(NULL != node) {
+        _clear(node->left);
+        _clear(node->right);
+        delete node;
+    }
 }
 
 void skdtree_t::optimise()
