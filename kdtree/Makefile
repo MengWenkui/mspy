@@ -1,4 +1,7 @@
-all: meta_kdtree test_kdtree skdtree_test
+all: meta_kdtree test_kdtree skdtree_test point_query
+
+point_query: point_query.cpp skdtree.cpp  ../partition.c ../myutil.c ../filter.c
+	g++ -o $@ $^ -g
 
 skdtree_test: skdtree_test.cpp skdtree.cpp  ../partition.c ../myutil.c ../filter.c
 	g++ -o $@ $^ -g
@@ -10,4 +13,4 @@ test_kdtree: test_kdtree.cpp
 	g++ -o $@ $^ -g
 
 clean:
-	rm meta_kdtree test_kdtree skdtree_test *.o -rf
+	rm meta_kdtree test_kdtree skdtree_test point_query.cpp *.o -rf

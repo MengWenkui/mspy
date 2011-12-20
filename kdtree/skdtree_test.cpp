@@ -98,8 +98,8 @@ int main(int argc, char *argv[])
     {
         
         struct timeval start, end;
-        meta_info_t low(0, 0, 0, 0, 0, 0);
-        meta_info_t high(0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff);
+        meta_info_t low(0, 0, 1024*1024, 0, 0, 0);
+        meta_info_t high(0, 0, 2024*1024, 0xffffffff, 0xffffffff, 0xffffffff);
         region_t r(low, high);
 
         // range find in kdtree
