@@ -15,18 +15,25 @@ double get_interval(struct timeval start, struct timeval end)
     return (double)val / 1000000;
 }
 
+inline bool equals(file_meta *m, const meta_info_t &c)
+{
+     if(m->uid == c.d[2] && m->ino == c.d[0] && 
+           m->size == c.d[1] && m->atime == c.d[3] && 
+            m->ctime == c.d[4] && m->mtime == c.d[5]) {
+            return true;
+     }
+     return false;
+}
 
 file_meta *mylist_find(mylist *mlist, const meta_info_t &c)
 {
     for(int i = 0; i < mlist->size; i++) {
         file_meta *m = (file_meta *)mlist->item[i].data;
-        if(m->uid == c.d[2] && m->ino == c.d[0] && 
-           m->size == c.d[1] && m->atime == c.d[3] && 
-            m->ctime == c.d[4] && m->mtime == c.d[5]) {
+        if(true == equals(m, c)) {
             return m;
         }
-    }
-    return NULL;
+   }
+   return NULL;
 }
 
 void write_xls(const char * filename, double result[][100], int rows, int cols)
@@ -64,7 +71,7 @@ int main(int argc, char *argv[])
     mylist *mlist = meta_read(argv[1]);
 
     int base = 10000;
-    int scale = 30000;
+    int scale = 150000;
     double result[10][100];
     struct timeval start, end;
     int idx = 0;
