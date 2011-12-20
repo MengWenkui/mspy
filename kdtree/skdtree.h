@@ -11,22 +11,26 @@ struct meta_info_t {
             uint32_t size, uint32_t atime,
             uint32_t ctime, uint32_t mtime) 
     {
-        /*
         d[0] = uid;
         d[1] = gid;
         d[2] = size;
         d[3] = atime;
         d[4] = ctime;
         d[5] = mtime;
-        */
-
-        d[0]= size;
-        d[1]= atime;
-        d[2] = ctime;
-        d[3] = mtime;
-        d[4] = uid;
-        d[5] = gid;
     }
+
+    meta_info_t(uint32_t ino, uint32_t uid, uint32_t gid, 
+            uint32_t size, uint32_t atime,
+            uint32_t ctime, uint32_t mtime) 
+    {
+        d[0] = ino;
+        d[1] = size;
+        d[2] = uid;
+        d[3] = atime;
+        d[4] = ctime;
+        d[5] = mtime;
+    }
+
 
     bool compare(const meta_info_t &that) const
     {

@@ -20,9 +20,9 @@ file_meta *mylist_find(mylist *mlist, const meta_info_t &c)
 {
     for(int i = 0; i < mlist->size; i++) {
         file_meta *m = (file_meta *)mlist->item[i].data;
-        if(m->uid == c.d[4] && m->gid == c.d[5] && 
-           m->size == c.d[0] && m->atime == c.d[1] && 
-            m->ctime == c.d[2] && m->mtime == c.d[3]) {
+        if(m->uid == c.d[2] && m->ino == c.d[0] && 
+           m->size == c.d[1] && m->atime == c.d[3] && 
+            m->ctime == c.d[4] && m->mtime == c.d[5]) {
             return m;
         }
     }
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     mylist *mlist = meta_read(argv[1]);
 
     int base = 10000;
-    int scale = 150000;
+    int scale = 30000;
     double result[10][100];
     struct timeval start, end;
     int idx = 0;
@@ -77,13 +77,13 @@ int main(int argc, char *argv[])
         
         for(int i = 0; i < base; i++) {
             file_meta *m = (file_meta *)mlist->item[i].data;
-            meta_info_t *mi = new meta_info_t(m->uid, m->gid, m->size, m->atime, m->ctime, m->mtime);
+            meta_info_t *mi = new meta_info_t(m->ino, m->uid, m->gid, m->size, m->atime, m->ctime, m->mtime);
             se.insert(mi);
         }
 
 
         file_meta *m = (file_meta *)mlist->item[base/2-1].data;
-        meta_info_t *target = new meta_info_t(m->uid, m->gid, m->size, m->atime, m->ctime, m->mtime);
+        meta_info_t *target = new meta_info_t(m->ino, m->uid, m->gid, m->size, m->atime, m->ctime, m->mtime);
         
         // list
         gettimeofday(&start, NULL);
