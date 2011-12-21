@@ -18,8 +18,8 @@ double get_interval(struct timeval start, struct timeval end)
 inline bool encloses(file_meta *m, const meta_info_t &vmin, const meta_info_t &vmax)
 {
     if(m->ino >= vmin.d[0] && m->ino <= vmax.d[0] &&
-       m->size >= vmin.d[1] && m->size <= vmax.d[1] &&
        m->uid >= vmin.d[2] && m->uid <= vmax.d[2] && 
+       m->size >= vmin.d[1] && m->size <= vmax.d[1] &&
        m->atime >= vmin.d[3] && m->atime <= vmax.d[3] &&
        m->ctime >= vmin.d[4] && m->ctime <= vmax.d[4] &&
        m->mtime >= vmin.d[5] && m->mtime <= vmax.d[5]) {
@@ -28,9 +28,9 @@ inline bool encloses(file_meta *m, const meta_info_t &vmin, const meta_info_t &v
     return false;
 }
 
-void mylist_find_range(mylist *mlist, const meta_info_t &vmin, const meta_info_t &vmax, std::vector<file_meta *> &result)
+void mylist_find_range(mylist *mlist, const meta_info_t &vmin, const meta_info_t &vmax, std::vector<file_meta *> &result, int scale)
 {
-    for(int i = 0; i < mlist->size; i++) {
+    for(int i = 0; i < scale; i++) {
         file_meta *m = (file_meta *)mlist->item[i].data;
         if(true == encloses(m, vmin, vmax)) {
             result.push_back(m);
@@ -90,8 +90,8 @@ int main(int argc, char *argv[])
             se.insert(mi);
         }
 
-        meta_info_t min(0, 0, 0, 1024 * 1024, 0, 0, 1209492430);
-        meta_info_t max(0xffffffff, 0, 0, 2 * 1024 * 1024, 0xffffffff, 0xffffffff, 0xffffffff);
+        meta_info_t min(0, 0, 0, 0, 0, 0, 0);
+        meta_info_t max(0xffffffff, 0xffffffff, 0xffffffff, 1024, 0xffffffff, 0xffffffff, 0xffffffff);
         region_t reg(min, max);
         std::vector<meta_info_t *> v;
         std::vector<file_meta *> r;
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 
         // list
         gettimeofday(&start, NULL);
-        mylist_find_range(mlist, min, max, r);
+        mylist_find_range(mlist, min, max, r, base);
         gettimeofday(&end, NULL);
         result[0][idx] = get_interval(start, end);
 

@@ -222,6 +222,29 @@ void skdtree_t::_dump(skdtree_node_t *node, result_type &result)
     }
 }
 
+void skdtree_t::dump_tofile(const char *filename)
+{
+    if(NULL != root) {
+        FILE *fp = fopen(filename, "w+");
+        if(NULL == fp) {
+            return;
+        }
+        _dump_tofile(root, fp);
+        fclose(fp);
+    }
+}
+
+void skdtree_t::_dump_tofile(skdtree_node_t *node, FILE *fp)
+{
+    if(NULL != node) {
+        fwrite(node->meta, sizeof(meta_info_t), 1, fp);
+        _dump_tofile(node->left, fp);
+        _dump_tofile(node->right, fp);
+    }
+}
+
+
+
 void skdtree_t::clear()
 {
     _clear(root);
