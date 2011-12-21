@@ -247,7 +247,7 @@ void skdtree_t::_dump_tofile(skdtree_node_t *node, FILE *fp)
 
 void skdtree_t::clear()
 {
-    _clear(root);
+//    _clear(root);
     root = NULL;
 }
 
