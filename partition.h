@@ -28,6 +28,7 @@ struct file_meta {
     uint32_t atime;
     uint32_t ctime;
     uint32_t mtime;
+    uint32_t ino;
     char path[0];
 };
 

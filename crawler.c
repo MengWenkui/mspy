@@ -108,12 +108,15 @@ int crawl_run(const char *cfile)
 }
 
 
-int main()
+int main(int argc, char *argv[])
 {
-    if(0 != access("data", F_OK)) {
-        mkdir("data", 0755);
+    if(3 != argc) {
+        printf("./mspy-crawler config-file datadir\n");
     }
-    crawl_run("partition.conf");
+    if(0 != access(argv[2], F_OK)) {
+        mkdir(argv[2], 0755);
+    }
+    crawl_run(argv[1]);
     return 0;
 }
 

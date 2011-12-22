@@ -92,6 +92,7 @@ file_meta *meta_new(struct stat *st, const char *fullpath)
     meta->atime = st->st_atime;
     meta->ctime = st->st_ctime;
     meta->mtime = st->st_mtime;
+    meta->ino = st->st_ino;
     strcpy(meta->path, fullpath);
 
     return meta;
