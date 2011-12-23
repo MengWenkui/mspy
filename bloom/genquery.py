@@ -1,6 +1,6 @@
 #!/usr/local/bin/python
 
-import time;
+import time
 
 uid_querys = range(0, 40)  # query uid from 0-39, see /etc/passwd
 size_querys = []           # size query

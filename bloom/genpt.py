@@ -1,6 +1,6 @@
 #!/usr/local/bin/python
 
-import os;
+import os
 
 dirs = os.listdir("/")
 file_obj = open("partition.conf", "w+")

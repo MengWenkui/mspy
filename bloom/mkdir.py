@@ -1,6 +1,6 @@
 #!/usr/local/bin/python
 
-import os;
+import os
 
 prefix = 'pt_'
 for i in range(100):
