@@ -2,26 +2,26 @@
 
 import time
 
-uid_querys = range(0, 40)  # query uid from 0-39, see /etc/passwd
+uid_querys = range(0, 1)   # just root
 size_querys = []           # size query
-atime_querys = []
+ctime_querys = []
 mtime_querys = []
 
 #querys below 1KB
-for i in range(0, 1000, 100) : 
-    query = (i, i + 100)
+for i in range(1, 1000, 10) : 
+    query = (i, i + 10)
     size_querys.append(query)
 
 
 #querys between 1K ~ 1M
-for i in range(0, 1000, 10) : 
+for i in range(1, 1000, 10) : 
     query = (i * 1024, (i + 10) * 1024)
     size_querys.append(query)
 
 
 #querys between 1M - 1G
-for i in range(0, 1000, 10) :
-    query = (i * 1024 * 1024, (i + 10) * 1024 * 1024)
+for i in range(1, 1000, 500) :
+    query = (i * 1024 * 1024, (i + 200) * 1024 * 1024)
     size_querys.append(query)
 
 #query by time
@@ -30,19 +30,19 @@ now = time.time()
 today = now - now % daylong + daylong     # today
 
 days = []
-days.append(("20111223", "2011124"))      # today 
-days.append(("20111222", "2011124"))      # yesterday
-days.append(("20111221", "2011124"))      # the day before yesterday
-days.append(("20111217", "2011124"))      # rencent week
-days.append(("20111124", "2011124"))      # rencent month
+days.append(("20111223", "20111225"))      # today 
+days.append(("20111222", "20111225"))      # yesterday
+days.append(("20111221", "20111225"))      # the day before yesterday
+days.append(("20111217", "20111225"))      # rencent week
+days.append(("20111124", "20111225"))      # rencent month
 
 for day in days :
-    atime_querys.append(day)
+    ctime_querys.append(day)
     mtime_querys.append(day)
 
 #print uid_querys
 #print size_querys
-#print atime_querys
+#print ctime_querys
 #print mtime_querys
 
 all_querys = []
@@ -57,14 +57,14 @@ for i in size_querys :
     query = "query" + " -s " + str(i[0]) + " " + str(i[1])
     all_querys.append(query)
 
-# just query atime
-for i in atime_querys :
+# just query ctime
+for i in ctime_querys :
     query = "query" + " -a " + i[0] + " " + i[1]
     all_querys.append(query)
 
 # just query mtime
 for i in mtime_querys :
-    query = "query" + " -m " + i[0] + " " + i[1]
+    query = "query" + " -c " + i[0] + " " + i[1]
     all_querys.append(query)
 
 
@@ -74,28 +74,28 @@ for i in  uid_querys :
         query = "query" + " -u " + str(i) + " -s " + str(j[0]) + " " + str(j[1]) 
         all_querys.append(query)
 
-# mix uid with atime
+# mix uid with ctime
 for i in uid_querys :
-    for j in atime_querys: 
+    for j in ctime_querys: 
         query = "query" + " -u " + str(i) + " -a " + j[0] + " " + j[1]
         all_querys.append(query)
 
 # mix uid with mtime
 for i in uid_querys :
     for j in mtime_querys: 
-        query = "query" + " -u " + str(i) + " -m " + j[0] + " " + j[1]
+        query = "query" + " -u " + str(i) + " -c " + j[0] + " " + j[1]
         all_querys.append(query)
 
-# mix size with atime
+# mix size with ctime
 for i in size_querys :
-    for j in atime_querys :
+    for j in ctime_querys :
         query = "query" + " -s " + str(i[0]) + " " + str(i[1]) + " -a " + j[0] + " " + j[1]
         all_querys.append(query)
  
 # mix size with mtime
 for i in size_querys :
     for j in mtime_querys :
-        query = "query" + " -s " + str(i[0]) + " " + str(i[1]) + " -m " + j[0] + " " + j[1]
+        query = "query" + " -s " + str(i[0]) + " " + str(i[1]) + " -c " + j[0] + " " + j[1]
         all_querys.append(query)
 
 # print all_querys

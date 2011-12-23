@@ -4,7 +4,7 @@
 #include "myutil.h"
 #include "query.h"
 
-void qset_size_query(size_query *query, int min, int max)
+void qset_size_query(size_query *query, unsigned int min, unsigned int max)
 {
     assert(min >= 0 && max >= 0);
     query->min = min;
@@ -17,7 +17,7 @@ void qset_id_query(id_query *query, int id)
     query->id = id;
 }
 
-void qset_time_query(time_query *query, int min, int max)
+void qset_time_query(time_query *query, unsigned int min, unsigned int max)
 {
     assert(min >= 0 && max >= 0);
     query->min = min;

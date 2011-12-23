@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -std=c99 -g
-TAR = mspy-crawl mspy-search
+TAR = mspy-crawl mspy-search mspy-filter
 
 all: $(TAR)
 
@@ -14,6 +14,10 @@ mspy-crawl: partition.o filter.o crawler.o myutil.o
 	
 mspy-search: search.o spy.o partition.o filter.o myutil.o query.o
 	$(CC) -o $@ $^
+
+mspy-filter: qfilter.o spy.o partition.o filter.o myutil.o query.o
+	$(CC) -o $@ $^
+
 
 clean:
 	rm *.o -f

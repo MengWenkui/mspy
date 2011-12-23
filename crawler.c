@@ -112,6 +112,7 @@ int main(int argc, char *argv[])
 {
     if(3 != argc) {
         printf("./mspy-crawler config-file datadir\n");
+        return -1;
     }
     if(0 != access(argv[2], F_OK)) {
         mkdir(argv[2], 0755);

@@ -333,7 +333,7 @@ int do_search(partition *pt, user_query *query)
 
 int main(int argc, char *argv[])
 {
-    mylist *slist = spy_init("partition.conf");
+    mylist *slist = spy_init("bloom/partition.conf");
     user_query *query = (user_query *)mymalloc(sizeof(user_query));
 
     usage();

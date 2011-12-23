@@ -2,16 +2,16 @@
 #define _QUERY_H
 
 struct user_query {
-    int size_min;
-    int size_max;
+    unsigned int size_min;
+    unsigned int size_max;
     int uid;
     int gid;
-    int atime_min;
-    int atime_max;
-    int ctime_min;
-    int ctime_max;
-    int mtime_min;
-    int mtime_max;
+    unsigned int atime_min;
+    unsigned int atime_max;
+    unsigned int ctime_min;
+    unsigned int ctime_max;
+    unsigned int mtime_min;
+    unsigned int mtime_max;
     char type[8];
 };
 
@@ -56,8 +56,8 @@ struct type_query {
 typedef struct type_query type_query;
 
 void qset_id_query(id_query *query, int id);
-void qset_size_query(size_query *query, int min, int max);
-void qset_time_query(time_query *query, int min, int max);
+void qset_size_query(size_query *query, unsigned int min, unsigned int max);
+void qset_time_query(time_query *query, unsigned int min, unsigned int max);
 void qset_type_query(type_query *query, char *type);
 
 #endif
